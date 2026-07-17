@@ -5,14 +5,14 @@
 Passer de la sécurité **par IP** à la sécurité **par identité** (Identity-Based Security).
 
 ### Avantages
-1. **Traçabilité absolue** : les logs Squid montrent *"l'utilisateur **jdoe** est allé sur facebook.com"* au lieu d'une simple IP
+1. **Traçabilité absolue** : les logs Squid montrent *"Le user **jdoe** est allé sur facebook.com"* au lieu d'une simple IP
 2. **Filtrage par groupe** : *"Le groupe Marketing peut accéder aux réseaux sociaux, le groupe Comptabilité non"*
 
 ---
 
 ## Protocole : Kerberos SSO (Single Sign-On)
 
-L'utilisateur n'a même **pas besoin de taper son mot de passe** au proxy !  
+Le user n'a même **pas besoin de taper son mot de passe** au proxy !  
 Squid regarde son **ticket Kerberos** (généré automatiquement à l'ouverture de session) et le laisse passer.
 
 ---
@@ -30,7 +30,7 @@ Squid regarde son **ticket Kerberos** (généré automatiquement à l'ouverture 
 auth_param negotiate program /usr/lib/squid/negotiate_kerberos_auth -s GSS_C_NO_NAME
 auth_param negotiate children 10
 
-# 2. Créer une règle "Il FAUT être authentifié"
+# 2. Créer une règle "faut être authentifié"
 acl authenticated proxy_auth REQUIRED
 
 # 3. Autoriser ceux qui sont authentifiés
@@ -65,7 +65,7 @@ sudo systemctl restart squid
 sudo tail -f /var/log/squid/access.log
 ```
 
-Le **nom de l'utilisateur** apparaît dans la ligne de log à la place du tiret `-` :
+Le **nom de Le user** apparaît dans la ligne de log à la place du tiret `-` :
 ```
 1689451200.123    200 TCP_MISS/200 1234 GET http://example.com - jdoe HIER_DIRECT/...
 ```
@@ -74,8 +74,8 @@ Le **nom de l'utilisateur** apparaît dans la ligne de log à la place du tiret 
 
 ## Résultat 🎯
 
-On a **bloqué l'accès à Internet sauf pour les utilisateurs authentifiés** via l'Active Directory !
+On a **bloqué l'accès à Internet sauf pour les users authentifiés** via l'Active Directory !
 
 - ✅ Traçabilité : chaque requête est liée à un **nom d'utilisateur**
 - ✅ SSO : pas besoin de retaper le mot de passe (ticket Kerberos)
-- ✅ Sécurité : les machines non-authentifiées sont bloquées (erreur 407)
+- ✅ Sécurité : les VMs non-authentifiées sont bloquées (erreur 407)

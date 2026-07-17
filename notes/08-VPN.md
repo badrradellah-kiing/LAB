@@ -11,7 +11,7 @@ Au lieu d'exposer chaque service individuellement (SSH, GUI firewall, apps web),
 ### Résultat
 
 Une fois connecté au VPN :
-- La machine distante reçoit une **IP interne** du réseau
+- la VM distante reçoit une **IP interne** du réseau
 - Elle se comporte comme si elle était **physiquement branchée sur le LAN**
 - Surface d'attaque réduite à **un seul point d'entrée**, fortement authentifié
 
@@ -38,7 +38,7 @@ Une fois connecté au VPN :
 - [ ] Configurer le Peer (client distant) avec sa clé publique
 - [ ] Attribuer une IP au tunnel (ex: `10.10.50.1/24`)
 - [ ] Créer les règles firewall pour l'interface WireGuard
-- [ ] Tester la connexion depuis la machine `attacker-kali` (simulation accès distant)
+- [ ] Tester la connexion depuis la VM `attacker-kali` (simulation accès distant)
 - [ ] Valider l'accès au LAN depuis le tunnel VPN
 
 ---

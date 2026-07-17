@@ -17,7 +17,7 @@ Le **SSL Bump** = donner à Squid l'autorisation de faire une attaque **Man-in-t
 
 ## Setup : 4 étapes de préparation
 
-Toutes les commandes sont exécutées sur la machine **`proxy-squid`** (`10.10.10.20`).
+Toutes les commandes sont exécutées sur la VM **`proxy-squid`** (`10.10.10.20`).
 
 ### Étape A : Créer la Clé Maître (Autorité de Certification)
 

@@ -32,7 +32,7 @@ Ajouter :
 > 2. `id testadmin` → **uid=3001(testadmin)**, groupes: domain users (3006), **domain admins (3007)**, BUILTIN\administrators (3000) ✅
 > 3. `sudo visudo` → ajout de la règle RBAC pour Domain Admins
 > 4. `su - testadmin` → première tentative échoue (mauvais mot de passe), seconde réussit !
-> 5. Le prompt change en **`testadmin@badr-VirtualBox`** — l'utilisateur AD est connecté sur Linux !
+> 5. Le prompt change en **`testadmin@badr-VirtualBox`** — Le user AD est connecté sur Linux !
 > 6. Alerte `/home/LAB/testadmin` n'existe pas (résolu avec PAM `pam_mkhomedir`)
 
 ---
@@ -65,7 +65,7 @@ On a utilisé `optional` pour `pam_mkhomedir.so` :
 auth       required   pam_wheel.so group=sudo
 ```
 
-> Par défaut, **n'importe qui** peut taper `su - root` et tenter le mot de passe.  
+> par défaut (de base), **n'importe qui** peut taper `su - root` et tenter le mot de passe.  
 > Avec `pam_wheel.so` : seuls les membres du groupe `sudo` (ou `wheel`) peuvent **même essayer**.  
 > C'est une excellente **réduction de surface d'attaque**.
 
@@ -89,7 +89,7 @@ auth required pam_google_authenticator.so
 ```
 auth required pam_wheel.so group=sudo
 ```
-- Si l'utilisateur n'appartient pas au groupe `sudo` → PAM rejette immédiatement la demande de `su` sans même afficher l'invite de mot de passe
+- Si Le user n'appartient pas au groupe `sudo` → PAM rejette immédiatement la demande de `su` sans même afficher l'invite de mot de passe
 
 ---
 
@@ -102,7 +102,7 @@ auth required pam_wheel.so group=sudo
 - Les lignes sont lues **de haut en bas**
 - Un `sufficient` avant un `required` = un utilisateur peut **contourner** la sécurité en validant le test facile
 
-### 3. La Règle d'Or de l'Administrateur
+### 3. La Règle d'Or de L'admin
 
 > 🛡️ **Ne ferme JAMAIS ta session root active quand tu modifies un fichier PAM !**  
 > 1. Garde un **2ème terminal** ouvert en root  

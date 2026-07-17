@@ -13,7 +13,7 @@ On n'a pas utilisé Windows Server, mais **Samba** configuré en **Active Direct
 |-----------|------|----------|
 | **LDAP** | Base de données des utilisateurs, groupes, ordinateurs, mots de passe hachés | 📖 L'Annuaire |
 | **Kerberos** | Authentification par tickets — ne transmet **jamais** le mdp sur le réseau | 🔐 Le Vigile |
-| **DNS** | Résolution de noms — guide les machines vers `lab.local` | 🗺️ Le GPS |
+| **DNS** | Résolution de noms — guide les VMs vers `lab.local` | 🗺️ Le GPS |
 
 ---
 
@@ -46,7 +46,7 @@ Si le DNS répond mal → Kerberos échoue. Le DNS **doit pointer** vers le DC (
 ### `winbindd` (Winbind)
 - **Le traducteur universel** AD ↔ Linux
 - Convertit les **SIDs** Windows en **UIDs/GIDs** Linux
-- Va chercher les utilisateurs dans l'AD et les rend visibles au système
+- Va chercher les users dans l'AD et les rend visibles au système
 
 ### NSS (Name Service Switch)
 - Configuré via `/etc/nsswitch.conf`
@@ -82,7 +82,7 @@ sudo apt install winbind libnss-winbind libpam-winbind -y
 | Paquet | Rôle |
 |--------|------|
 | `winbind` | Le démon de traduction AD ↔ Linux |
-| `libnss-winbind` | Permet à Linux de voir les utilisateurs AD via `getent` |
+| `libnss-winbind` | Permet à Linux de voir les users AD via `getent` |
 | `libpam-winbind` | Permet l'authentification AD pour SSH / session graphique |
 
 ---
@@ -206,7 +206,7 @@ sudo net ads join -U Administrator -S 10.10.10.5
 
 ![wbinfo -u — liste des utilisateurs AD visible](../screenshots/Module2-AD-Samba-Kerberos/Screenshot%20from%202026-06-09%2012-59-59.png)
 
-> `wbinfo -u` affiche enfin les utilisateurs du domaine :
+> `wbinfo -u` affiche enfin les users du domaine :
 > ```
 > LAB\administrator
 > LAB\guest
@@ -222,7 +222,7 @@ sudo net ads join -U Administrator -S 10.10.10.5
 
 ![getent passwd — administrator avec /bin/false](../screenshots/RBAC-PAM/Screenshot%20from%202026-06-09%2013-07-34.png)
 
-> Première tentative : `administrator:*:3000:3006::/home/LAB/administrator:/bin/false` — le shell est bloqué.
+> Première tentative : `administrator:*:3000:3006::/home/LAB/administrator:/bin/false` — le shell se fait drop direct.
 
 **Correction :** Ajout de 4 options cruciales dans `/etc/samba/smb.conf` :
 ```ini
@@ -289,9 +289,9 @@ sudo samba-tool group addmembers 'Domain Admins' testadmin
 ### Processus de jonction
 | Commande / Service | Rôle |
 |-------------------|------|
-| `net ads join` | Crée une relation de confiance — la machine reçoit un "machine secret" |
-| `winbind` | Le traducteur — comprend les utilisateurs AD (ex: `LAB\Administrator`) |
-| `nsswitch.conf` | Le panneau de contrôle — dit à Linux où chercher les utilisateurs |
+| `net ads join` | Crée une relation de confiance — la VM reçoit un "machine secret" |
+| `winbind` | Le traducteur — comprend les users AD (ex: `LAB\Administrator`) |
+| `nsswitch.conf` | Le panneau de contrôle — dit à Linux où chercher les users |
 
 ### Le mapping d'identifiants (idmap)
 > *"Dans un Active Directory Windows, un utilisateur est identifié par un **SID**. Mais Linux ne comprend que les **UID/GID** numériques. J'ai configuré le sous-système **idmap_tdb** dans Samba avec une plage stricte (3000-7999) pour que chaque utilisateur AD reçoive dynamiquement un UID unique et persistant."*

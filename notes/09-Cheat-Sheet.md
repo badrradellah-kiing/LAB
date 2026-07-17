@@ -16,7 +16,7 @@ klist
 # Tester le canal sécurisé (secret de confiance RPC)
 wbinfo -t
 
-# Lister tous les utilisateurs de l'AD
+# Lister tous les users de l'AD
 wbinfo -u
 
 # Forcer la synchronisation en ligne avec le DC
@@ -36,7 +36,7 @@ id administrator
 ## 🔗 Administration Domaine (Samba-Tool)
 
 ```bash
-# Joindre la machine au domaine AD
+# Joindre la VM au domaine AD
 sudo net ads join -U Administrator -S 10.10.10.5
 
 # Réinitialiser le mot de passe machine (trust account)
@@ -171,6 +171,6 @@ sudo visudo
 
 ```bash
 # (Dans pfSense GUI : VPN > WireGuard > Tunnels)
-# Port par défaut : 51820
+# Port par défaut (de base) : 51820
 # Interface : tun_wg0
 ```

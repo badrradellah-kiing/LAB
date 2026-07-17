@@ -6,13 +6,13 @@ La **DMZ** (DeMilitarized Zone) est un réseau **isolé** entre le LAN et Intern
 
 ### Pourquoi ?
 Si un hacker pirate le serveur web (Nginx), il est **coincé dans la DMZ**.  
-Le pare-feu pfSense lui interdit d'accéder au LAN grâce à la règle de blocage **"DMZ → LAN"**.
+Le firewall pfSense lui interdit d'accéder au LAN grâce à la règle de blocage **"DMZ → LAN"**.
 
 ### Comment j'ai configuré ça réseau
 | Élément | Adresse |
 |---------|---------|
 | Réseau DMZ | `10.10.30.0/24` |
-| Serveur web (`web-dmz`) | `10.10.30.10` |
+| serveur web (`web-dmz`) | `10.10.30.10` |
 | Passerelle (pfSense) | `10.10.30.1` |
 
 ---
@@ -26,7 +26,7 @@ Le pare-feu pfSense lui interdit d'accéder au LAN grâce à la règle de blocag
     Quelqu'un tape l'adresse publique → sa requête arrive sur la porte WAN de pfSense.
 
  2. Le Routage (pfSense & DNAT)
-    pfSense bloque tout par défaut. Mais grâce au Port Forwarding (DNAT) :
+    pfSense bloque tout par défaut (de base). Mais grâce au Port Forwarding (DNAT) :
     "Ah ! Requête port 80 ? → Transférer à 10.10.30.10 dans la DMZ."
 
  3. La Cible (Nginx en DMZ)
@@ -40,7 +40,7 @@ Le pare-feu pfSense lui interdit d'accéder au LAN grâce à la règle de blocag
 
 ![pfSense — Ping depuis la DMZ vers Internet](../screenshots/Module3-DMZ-Nginx/Screenshot%20from%202026-06-28%2008-28-02.png)
 
-> L'outil de diagnostic pfSense (`diag_ping.php`) permet de valider que l'interface DMZ (`10.10.30.1`) a bien accès à Internet (ici `8.8.8.8`). Cela confirme que le NAT sortant et les règles de base fonctionnent pour cette zone isolée.
+> L'outil de diagnostic pfSense (`diag_ping.php`) permet de valider que l'interface DMZ (`10.10.30.1`) a bien accès à Internet (ici `8.8.8.8`). Ça confirme que le NAT sortant et les règles de base fonctionnent pour cette zone isolée.
 
 ---
 
@@ -54,7 +54,7 @@ sudo systemctl start nginx
 
 ![web-dmz — Installation Nginx](../screenshots/Module3-DMZ-Nginx/Screenshot%20from%202026-06-28%2009-30-57.png)
 
-> L'installation de Nginx sur la machine `web-dmz` crée automatiquement le service et active les fichiers de base.
+> L'installation de Nginx sur la VM `web-dmz` crée automatiquement le service et active les fichiers de base.
 
 ---
 

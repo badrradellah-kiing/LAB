@@ -15,7 +15,7 @@ D’abord dans la config de pfSense, j'ai mis 3 cartes réseaux (le minimum synd
 |-----------|------|-----------|--------|
 | `em0` (WAN) | Internet (NAT) | `10.0.2.15/24` (DHCP) | Accès Internet sortant |
 | `em1` (LAN) | Réseau local interne | `10.10.10.1/24` | Machines internes |
-| `em2` (DMZ) | Zone démilitarisée | `10.10.30.1/24` | Serveur web isolé |
+| `em2` (DMZ) | Zone démilitarisée | `10.10.30.1/24` | serveur web isolé |
 
 ### Console pfSense au démarrage
 
@@ -96,7 +96,7 @@ C'est beaucoup plus propre de créer des "Alias" au lieu de taper des IP brutes 
 ## Commandes réseau de diagnostic
 
 ```bash
-# Voir les ports ouverts sur la machine
+# Voir les ports ouverts sur la VM
 ss -tulnp
 
 # Quel chemin le noyau prend pour atteindre une IP
@@ -108,7 +108,7 @@ ip link show
 # Vérifier l'adresse IP (Couche 3 : Réseau)
 ip addr show
 
-# Table de routage (passerelle par défaut / default gateway)
+# Table de routage (passerelle par défaut (de base) / default gateway)
 ip route show
 
 # Test DNS avec le serveur configuré dans /etc/resolv.conf

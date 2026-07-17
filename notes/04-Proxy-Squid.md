@@ -93,8 +93,8 @@ http_access deny all
 
 ### Pourquoi ?
 
-Avec un proxy **explicite**, l'utilisateur peut simplement le **désactiver** dans son navigateur et contourner tout le filtrage.  
-Le proxy **transparent** intercepte le trafic **automatiquement** via pfSense — l'utilisateur ne peut rien faire.
+Avec un proxy **explicite**, Le user peut simplement le **désactiver** dans son navigateur et contourner tout le filtrage.  
+Le proxy **transparent** intercepte le trafic **automatiquement** via pfSense — Le user ne peut rien faire.
 
 ### Fonctionnement
 
