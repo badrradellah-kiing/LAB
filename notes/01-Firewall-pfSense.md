@@ -2,16 +2,14 @@
 
 ## L'idée de base
 
-Le **firewall** est le **premier élément** qu'on installe dans un réseau — avant même les clients.  
-Il gère le DHCP, impose les règles de trafic, et dicte les "lois" du réseau à chaque machine qui s'y connecte.
-
-> En activant le DHCP sur pfSense, dès qu'une VM est créée et connectée au réseau interne, elle reçoit automatiquement une adresse IP et se soumet aux règles du firewall.
+First of all, dans un système le premier truc qu'on crée c'est le firewall, avant même les clients. 
+Comme ça par exemple, on active le DHCP direct dessus, et une fois qu'une nouvelle machine est créée, elle chope son IP toute seule, et surtout elle prend direct les lois du firewall.
 
 ---
 
-## Comment j'ai configuré ça des interfaces
+## Configuration des interfaces
 
-Le pfSense possède **3 cartes réseau** (interfaces) :
+D’abord dans la config de pfSense, j'ai mis 3 cartes réseaux (le minimum syndical pour faire une DMZ plus tard) :
 
 | Interface | Rôle | Adresse IP | Réseau |
 |-----------|------|-----------|--------|
@@ -35,21 +33,21 @@ Le pfSense possède **3 cartes réseau** (interfaces) :
 
 ## Web Configurateur
 
-- Le GUI d'administration pfSense est accessible via HTTP ou HTTPS
-- En lab : `http://10.10.10.1` (plus simple)
-- En production : **toujours HTTPS** !
+Le webconfigurateur du firewall permet d’utiliser un GUI pour administrer pfSense. 
+On peut utiliser http ou https pour le faire. J'ai pris HTTP parce que c'est plus simple en lab, mais en prod c'est HTTPS obligé !
 
 ---
 
 ## Règles de Firewall
 
-### ⚠️ L'ordre des règles = question de vie ou de mort
+### ⚠️ Attention à l'ordre des règles !
 
-> **Le piège classique en production :** Si tu places une règle générique *"Autoriser tout le monde"* à la ligne 2, et une règle restrictive *"Bloquer la DMZ vers le LAN"* à la ligne 5, la règle restrictive ne sera **jamais** lue. pfSense lit les règles **de haut en bas** et s'arrête à la première qui matche.
+Petit rappel pour pas se faire avoir : pfSense lit les règles de haut en bas et s'arrête à la première qui matche.
+Si on met "Allow All" en haut, les règles "Block" en bas serviront à rien.
 
 ### Création d'un Alias (ex: AD_DC)
 
-Dans pfSense, il est fortement recommandé d'utiliser des **Aliases** plutôt que des IP brutes. Cela rend les règles lisibles.
+C'est beaucoup plus propre de créer des "Alias" au lieu de taper des IP brutes partout.
 
 ![pfSense — Création Alias AD_DC](../screenshots/Module1-Firewall-pfSense/Screenshot%20from%202026-06-15%2017-48-11.png)
 
