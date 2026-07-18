@@ -63,12 +63,8 @@ WireGuard donne une **IP unique** à chaque appareil connecté au tunnel, et pfS
     - `sudo apt update` puis `sudo apt install wireguard -y`
 
 - **Étape 2 : Générer les clés cryptographiques**
-    - J'ai balancé la commande : `wg genkey | tee cleint_private.key | wg pubkey | tee client_public.key`
-    - ⚠️ **Galère n°1 : La faute de frappe bête**
-        - J'ai écrit `cleint_private.key` (avec un "ei"). En essayant de l'afficher avec un `cat cleint_public.key` (un mix des deux...), forcément le terminal me disait `No such file or directory`.
-        - *Solution :* J'ai capté la faute de frappe et j'ai juste fait un `cat cleint_private.key`.
+    - J'ai balancé la commande : `wg genkey | tee client_private.key | wg pubkey | tee client_public.key`
 
-![Kali — Erreur de frappe cleint_private.key](../screenshots/Module5-VPN/Screenshot%20from%202026-07-17%2020-26-48.png)
 
 ## 3. Le Handshake (Authentification mutuelle)
 
@@ -80,23 +76,19 @@ WireGuard donne une **IP unique** à chaque appareil connecté au tunnel, et pfS
 
 - **Étape 2 : Fichier de conf sur Kali**
     - `sudo nano /etc/wireguard/wg0.conf`
-    - ⚠️ **Galère n°2 : WireGuard ne pardonne pas sur la syntaxe**
-        - J'avais fait plein de petites fautes dans le fichier (`Adress` au lieu de `Address`, `PersistantKeepalive` au lieu de `PersistentKeepalive`) et j'avais mal recopié la clé publique du serveur pfSense.
-        - *Solution :* J'ai tout effacé et j'ai fait un copier-coller propre.
 
-![Kali — Erreurs syntaxiques wg0.conf](../screenshots/Module5-VPN/Screenshot%20from%202026-07-17%2020-41-46.png)
 
 ## 4. Le Grand Blocage : Les "bulles" réseaux de VirtualBox
 
 - Je lance le VPN : `sudo wg-quick up wg0`.
-- ⚠️ **Galère n°3 : Le dialogue de sourds (0 B received)**
+- ⚠️ **Galère n°1 : Le dialogue de sourds (0 B received)**
     - L'interface monte bien, Kali envoie des paquets (296 B sent), mais pfSense ne répond jamais. Pas de "latest handshake".
     - *Diagnostic :* En faisant un `ip a` sur Kali, je vois qu'elle a l'IP `10.0.2.15`... C'est littéralement la même IP WAN que pfSense. Le mode NAT par défaut de VirtualBox isolait chaque VM dans sa propre petite bulle.
 
 ![Kali — Dialogue de sourds (0 B received)](../screenshots/Module5-VPN/Screenshot%20from%202026-07-17%2020-43-55.png)
 ![Kali — Conflit d'IP VirtualBox](../screenshots/Module5-VPN/Screenshot%20from%202026-07-17%2020-45-14.png)
 
-- ⚠️ **Galère n°4 : Le réseau du CROUS bloque tout**
+- ⚠️ **Galère n°2 : Le réseau du CROUS bloque tout**
     - J'ai essayé de passer les cartes en "Accès par pont" (Bridged) pour régler le souci, mais pfSense ne recevait aucune IP.
     - *Raison :* Le réseau physique de la fac bloque la distribution d'IP directes aux VM pour des raisons de sécurité. Impossible de faire du bridge.
 
