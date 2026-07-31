@@ -51,9 +51,7 @@ aws budgets create-budget \
 
 ![Budget CloudShell](../screenshots/Module9-Cloud-Security/Screenshot%20from%202026-07-29%2014-39-12.png)
 
-Ensuite j'ai configuré `aws configure` sur ma machine locale avec mes access keys pour pouvoir tout piloter depuis mon terminal :
-
-![AWS Configure](../screenshots/Module9-Cloud-Security/Screenshot%20from%202026-07-29%2015-08-09.png)
+Ensuite j'ai configuré `aws configure` sur ma machine locale avec mes access keys pour pouvoir tout piloter depuis mon terminal au lieu de la console web.
 
 ---
 
