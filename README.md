@@ -4,7 +4,6 @@ Mon lab de sécurité réseau, construit de zéro sur des VMs isolées. 20 modul
 
 C'est pas un tuto copié-collé. C'est mes notes perso — les commandes qui ont marché, les trucs qui ont cassé, les pièges que j'ai pris en pleine face et comment je les ai résolus. Si un truc m'a fait galérer 2h, c'est dedans.
 
-> ⚠️ **Usage lab uniquement.** Tout ce qui est offensif ici ne vise que mes propres machines, sur un réseau complètement isolé d'Internet.
 
 ---
 
