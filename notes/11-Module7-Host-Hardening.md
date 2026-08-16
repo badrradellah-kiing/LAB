@@ -56,15 +56,12 @@ ssh-copy-id badr@10.10.10.20
 3. Vérification — connexion sans mot de passe :
 ```bash
 ssh badr@10.10.10.20
-# → ça passe direct, pas de prompt password
 ```
 
 4. Test de sécurité — on vérifie que `sshd -t` passe proprement :
 ```bash
 sudo sshd -t
-# → pas d'erreur, la config est bonne
 cat ~/.ssh/authorized_keys
-# → la clé ed25519 lab-admin est bien là
 ```
 
 ### Preuves visuelles
@@ -83,17 +80,14 @@ pfSense c'est le garde à l'entrée du réseau. Mais si quelqu'un arrive à pass
 ### La politique que j'ai appliquée
 
 ```bash
-# On bloque tout en entrée, on autorise la sortie
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 
-# On ouvre juste ce qu'il faut
-sudo ufw allow from 10.10.10.0/2 to any port 22 proto tcp     # SSH depuis le LAN
-sudo ufw allow from 10.10.10.0/24 to any port 3128 proto tcp  # Squid HTTP
-sudo ufw allow from 10.10.10.0/24 to any port 3129 proto tcp  # Squid HTTPS (bump)
-sudo ufw allow from 10.10.10.0/24 to any port 3130 proto tcp  # Squid alt
+sudo ufw allow from 10.10.10.0/2 to any port 22 proto tcp    
+sudo ufw allow from 10.10.10.0/24 to any port 3128 proto tcp 
+sudo ufw allow from 10.10.10.0/24 to any port 3129 proto tcp 
+sudo ufw allow from 10.10.10.0/24 to any port 3130 proto tcp 
 
-# On active le tout
 sudo ufw enable
 ```
 
@@ -101,28 +95,15 @@ sudo ufw enable
 
 ```bash
 sudo ufw status verbose
-# Status: active
-# Logging: on (low)
-# Default: deny (incoming), allow (outgoing), disabled (routed)
-#
-# To         Action   From
-# --         ------   ----
-# 22/tcp     ALLOW IN 0.0.0.0/2
-# 3128/tcp   ALLOW IN 10.10.10.0/24
-# 3129/tcp   ALLOW IN 10.10.10.0/24
-# 3130/tcp   ALLOW IN 10.10.10.0/24
 ```
 
 Test depuis le proxy et depuis lan-client :
 ```bash
-# Depuis proxy-squid :
-ping -c2 1.1.1.1         # → OK
-ping -c2 example.com     # → OK
-curl -x http://10.10.10.20:3128 -I http://example.com  # → HTTP/1.1 200 OK
+ping -c2 1.1.1.1        
+ping -c2 example.com    
+curl -x http://10.10.10.20:3128 -I http://example.com 
 
-# Depuis lan-client :
 curl -x http://10.10.10.20:3128 -I http://example.com
-# → 200 OK, Cache-Status: proxy-squid;hit;detail=match
 ```
 
 ### Preuves visuelles
@@ -174,33 +155,18 @@ Oh putain, ça a été un festival d'erreurs :
 
 J'ai tout repris de zéro :
 ```bash
-# Vider le fichier et repartir propre
 sudo nano /etc/fail2ban/jail.local
-# → une seule section [DEFAULT], une seule section [sshd]
 
-# Test de la config
 sudo fail2ban-client -t
-# → OK
 
-# Redémarrage
 sudo systemctl restart fail2ban
 sudo systemctl status fail2ban
-# → active (running)
 ```
 
 ### Vérification que ça tourne
 
 ```bash
 sudo fail2ban-client status sshd
-# Status for the jail: sshd
-# |- Filter
-# |  |- Currently failed: 0
-# |  |- Total failed:     0
-# |  `- File list:        /var/log/auth.log
-# `- Actions
-#    |- Currently banned: 0
-#    |- Total banned:     0
-#    `- Banned IP list:
 ```
 
 La jail SSH est active, zéro ban pour l'instant (normal, c'est un lab isolé).
@@ -251,9 +217,9 @@ network:
 
 **Test de connectivité :**
 ```bash
-ping 10.10.10.20   # proxy → OK
-ping 10.10.10.1    # gateway LAN → OK  
-ping 1.1.1.1       # internet → OK
+ping 10.10.10.20  
+ping 10.10.10.1   
+ping 1.1.1.1      
 ```
 
 ### Étape 2 : Distribution des clés SSH
@@ -262,18 +228,17 @@ Depuis mgmt-ansible, j'ai généré une clé Ed25519 et distribué sur toutes le
 
 ```bash
 ssh-keygen -t ed25519
-ssh-copy-id badr@10.10.10.10   # lan-client → OK
-ssh-copy-id badr@10.10.30.10   # web-dmz → OK
-# proxy-squid a été plus compliqué (too many auth failures au début)
+ssh-copy-id badr@10.10.10.10  
+ssh-copy-id badr@10.10.30.10  
 ```
 
 > **Le piège ssh-copy-id :** la première fois j'ai eu "No identities found" parce que j'avais pas encore généré la clé sur mgmt-ansible. Faut faire `ssh-keygen` AVANT `ssh-copy-id`, logique mais quand t'es fatigué tu oublies.
 
 Vérification avec `ssh hostname` :
 ```bash
-ssh badr@10.10.10.10 hostname  # → badr-VirtualBox
-ssh badr@10.10.10.20 hostname  # → proxy-squid
-ssh badr@10.10.30.10 hostname  # → web-dmz
+ssh badr@10.10.10.10 hostname 
+ssh badr@10.10.10.20 hostname 
+ssh badr@10.10.30.10 hostname 
 ```
 
 ### Étape 3 : Premier test Ansible
@@ -301,9 +266,6 @@ ansible_ssh_private_key_file=~/.ssh/id_ed25519
 Test de connectivité Ansible :
 ```bash
 ansible all -i inventory.ini -m ping
-# 10.10.10.10 | SUCCESS => { "ping": "pong" }
-# 10.10.10.20 | SUCCESS => { "ping": "pong" }
-# 10.10.30.10 | SUCCESS => { "ping": "pong" }
 ```
 
 Les 3 machines répondent. On est bon.
@@ -345,19 +307,11 @@ Fichier `harden.yml` :
 **Premier run (avec changements) :**
 ```bash
 ansible-playbook -i inventory.ini harden.yml
-# PLAY RECAP
-# 10.10.10.10  : ok=5  changed=2  unreachable=0  failed=0
-# 10.10.10.20  : ok=5  changed=2  unreachable=0  failed=0
-# 10.10.30.10  : ok=5  changed=3  unreachable=0  failed=0
 ```
 
 **Deuxième run (idempotence vérifiée) :**
 ```bash
 ansible-playbook -i inventory.ini harden.yml
-# PLAY RECAP
-# 10.10.10.10  : ok=4  changed=0  failed=0
-# 10.10.10.20  : ok=4  changed=0  failed=0
-# 10.10.30.10  : ok=4  changed=0  failed=0
 ```
 
 `changed=0` partout au 2e run → le playbook est idempotent. C'est exactement ce qu'on veut.
@@ -411,9 +365,6 @@ Même avec des clés SSH, on rajoute une couche : un code TOTP (Time-based One-T
 ```bash
 sudo apt install libpam-google-authenticator -y
 google-authenticator
-# → QR code affiché dans le terminal
-# → "Do you want authentication tokens to be time-based (y/n) y"
-# → Secret key fourni en backup
 ```
 
 ### Configuration de PAM
@@ -436,10 +387,6 @@ KbdInteractiveAuthentication yes
 
 ```bash
 ssh badr@10.10.10.20
-# (badr@10.10.10.20) Verification code: ******
-# (badr@10.10.10.20) Password:
-# Welcome to Ubuntu 24.04.4 LTS
-# IPv4 address for enp0s3: 10.10.10.20
 ```
 
 Le MFA marche ! Clé SSH + code TOTP = connexion. Sans le code → refusé.

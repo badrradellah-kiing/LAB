@@ -136,14 +136,11 @@ http_port 10.10.10.20:3129 intercept
 ### Test de validation
 
 ```bash
-# Sur lan-client : supprimer toute config proxy
 unset http_proxy
 unset https_proxy
 
-# Requête sans proxy configuré
 curl -I http://neverssl.com
 
-# Sur proxy-squid : vérifier que la requête apparaît dans les logs
 sudo tail -n 5 /var/log/squid/access.log
 sudo grep neverssl /var/log/squid/access.log
 ```
@@ -170,9 +167,7 @@ sudo awk '{print $7}' /var/log/squid/access.log | sort | uniq -c | sort -rn | he
 ### Isoler le trafic d'une machine suspecte
 
 ```bash
-# Filtrer par IP (ex: machine d'un employé suspect)
 sudo grep '10.10.10.10' /var/log/squid/access.log
-# Ajouter | less si le fichier est trop long
 ```
 
 ### Squid parse — validation de la config complète

@@ -1,7 +1,7 @@
-last_processed=Screenshot from 2026-07-23 15-42-54.png
-last_module=Module7-Host-Hardening
-last_date=2026-07-23
-screenshot_count_module7=47
+last_processed=Screenshot from 2026-08-14 23-59-59.png
+last_module=Module20-Docker
+last_date=2026-08-14
+screenshot_count_module20=7
 notes_written=true
-sections_covered=SSH,UFW,Fail2Ban,Ansible,MFA,OpenVAS
-next_module=Module8
+sections_covered=Container_isolation,Image_hardening,Runtime_security,Trivy_scanning
+next_module=Kubernetes

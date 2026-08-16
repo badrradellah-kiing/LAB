@@ -72,10 +72,8 @@ Si le DNS répond mal → Kerberos échoue. Le DNS **doit pointer** vers le DC (
 
 **Correction :**
 ```bash
-# Purger le paquet serveur AD (conflit client/serveur)
 sudo apt purge samba-ad-dc -y
 
-# Installer les modules clients nécessaires
 sudo apt install winbind libnss-winbind libpam-winbind -y
 ```
 
@@ -127,14 +125,11 @@ group:          files winbind
 
 **Correction :**
 ```bash
-# 1. DNS temporaire pour récupérer Internet
 sudo bash -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
 
-# 2. Forcer l'heure manuellement
 sudo timedatectl set-ntp no
 sudo timedatectl set-time "12:45:00"
 
-# 3. Remettre le DNS du DC (obligatoire pour joindre le domaine)
 sudo bash -c 'echo "nameserver 10.10.10.5" > /etc/resolv.conf'
 ```
 
@@ -179,16 +174,12 @@ Puis : `Preauthentication failed / Invalid credentials`.
 
 **Correction :**
 ```bash
-# (Sur le serveur AD) : Reset du mot de passe avec une chaîne simple
 sudo samba-tool user setpassword Administrator --newpassword=badrnadi0.
 
-# (Sur le client Ubuntu) : Purge des secrets corrompus
 sudo rm -f /var/lib/samba/private/secrets.tdb
 
-# Test de ticket Kerberos (preuve que le mdp fonctionne)
 kinit Administrator@LAB.LOCAL
 
-# Jonction officielle
 sudo net ads join -U Administrator -S 10.10.10.5
 ```
 
@@ -259,10 +250,8 @@ sudo systemctl restart smbd winbind
 
 ### Sur le DC (10.10.10.5)
 ```bash
-# Créer un utilisateur
 sudo samba-tool user create testadmin
 
-# L'ajouter au groupe Domain Admins
 sudo samba-tool group addmembers 'Domain Admins' testadmin
 ```
 

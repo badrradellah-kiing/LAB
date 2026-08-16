@@ -79,7 +79,6 @@ ssl_bump bump all
 
 ```bash
 sudo touch /etc/squid/no_bump.txt
-# Ajouter plus tard : banque.fr, whatsapp.com, etc.
 sudo systemctl restart squid
 ```
 

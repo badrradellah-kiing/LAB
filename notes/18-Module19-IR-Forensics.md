@@ -83,11 +83,11 @@ Je me connecte en SSH depuis mon poste (mgmt-ansible) et j'inspecte, **dans l'or
 Les commandes de triage :
 
 ```bash
-who; last -20              # qui est/était connecté
-ps auxf                    # l'arbre des process (le f montre parent -> enfant)
-sudo ss -tunap             # les connexions réseau actives (pour trouver le C2)
-ls -alt /tmp /dev/shm /var/tmp   # les endroits classiques où on dépose un malware
-sudo crontab -l; ls -la /etc/cron.*   # la persistence
+who; last -20             
+ps auxf                   
+sudo ss -tunap            
+ls -alt /tmp /dev/shm /var/tmp  
+sudo crontab -l; ls -la /etc/cron.*  
 ```
 
 ### Ce que j'ai trouvé (et comment je l'ai lu)
@@ -155,15 +155,12 @@ Je me suis **coupé moi-même** en faisant les choses dans le mauvais ordre. J'a
 **Le bon ordre, c'est : les exceptions D'ABORD, le blocage EN DERNIER.**
 
 ```bash
-# 1. créer la table + chaîne SANS le drop pour l'instant (tout passe encore)
 sudo nft add table inet quarantine
 sudo nft add chain inet quarantine output '{ type filter hook output priority 0; }'
 
-# 2. les EXCEPTIONS d'abord (tant que rien est bloqué)
 sudo nft add rule inet quarantine output ct state established,related accept
-sudo nft add rule inet quarantine output ip daddr 10.10.99.10 accept   # mon poste
+sudo nft add rule inet quarantine output ip daddr 10.10.99.10 accept  
 
-# 3. SEULEMENT MAINTENANT, activer le blocage par défaut
 sudo nft chain inet quarantine output '{ policy drop; }'
 ```
 
@@ -316,10 +313,10 @@ LE piège : si je supprime le malware mais je laisse la porte d'entrée ouverte,
 L'ordre de nettoyage (maintenant que tout est capturé et scellé) :
 
 ```bash
-sudo pkill -f '.systemd-private'      # tuer le malware
-sudo pkill -f 'nc -lk 4444'           # tuer le C2
-sudo rm -f /etc/cron.d/systemd-daily  # virer la persistence (SINON il revient au cron)
-sudo rm -f /tmp/.systemd-private /tmp/.x11-unix-cache   # virer les fichiers
+sudo pkill -f '.systemd-private'     
+sudo pkill -f 'nc -lk 4444'          
+sudo rm -f /etc/cron.d/systemd-daily 
+sudo rm -f /tmp/.systemd-private /tmp/.x11-unix-cache  
 ```
 
 ![Éradication — pkill + rm + vérification](../screenshots/Module19-IR-Forensics/Screenshot%20from%202026-08-07%2023-34-54.png)
@@ -331,7 +328,7 @@ Cause racine (pour le drill) : exécution de x.sh téléchargé depuis 203.0.113
 ### Récupération : lever la quarantaine
 
 ```bash
-sudo nft flush ruleset   # enlever la règle de quarantaine
+sudo nft flush ruleset  
 ```
 
 **Un truc qui m'a surpris** : même après le flush, `ping 8.8.8.8` passait toujours pas. J'ai flippé au début. Mais en fait c'est NORMAL : web-dmz est en DMZ, et une DMZ bien configurée est volontairement bloquée par pfSense pour sortir vers Internet (un serveur web REÇOIT des connexions, il en initie pas vers l'extérieur). Donc web-dmz pingait jamais 8.8.8.8, même avant l'incident. Le vrai test de récupération c'est la connectivité INTERNE (vers pfSense 10.10.30.1 et mon poste 10.10.99.10), pas Internet.

@@ -179,8 +179,8 @@ J'ai créé un utilisateur `lab-admin` avec uniquement la politique `AmazonEC2Fu
 Pour vérifier que le confinement marche, j'ai fait un pen-test maison :
 
 ```bash
-aws ec2 describe-vpcs --profile lab-admin    # ✅ Marche
-aws iam list-users --profile lab-admin       # ❌ Access Denied
+aws ec2 describe-vpcs --profile lab-admin   
+aws iam list-users --profile lab-admin      
 ```
 
 ![IAM describe-vpcs OK](../screenshots/Module9-Cloud-Security/Screenshot%20from%202026-07-30%2016-42-22.png)
@@ -252,7 +252,6 @@ C'est important de respecter l'ordre sinon AWS refuse de supprimer certaines res
 9. **Supprimer les alarmes CloudWatch**
 
 ```bash
-# Exemple : terminer le bastion
 INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=bastion-lab" \
   --query "Reservations[*].Instances[*].InstanceId" --output text)
 aws ec2 terminate-instances --instance-ids $INSTANCE_ID

@@ -96,25 +96,18 @@ C'est beaucoup plus propre de créer des "Alias" au lieu de taper des IP brutes 
 ## Commandes réseau de diagnostic
 
 ```bash
-# Voir les ports ouverts sur la VM
 ss -tulnp
 
-# Quel chemin le noyau prend pour atteindre une IP
 ip route get 1.1.1.1
 
-# Vérifier que la carte réseau est UP (Couche 1-2 : Physique + Liaison)
 ip link show
 
-# Vérifier l'adresse IP (Couche 3 : Réseau)
 ip addr show
 
-# Table de routage (passerelle par défaut (de base) / default gateway)
 ip route show
 
-# Test DNS avec le serveur configuré dans /etc/resolv.conf
 dig google.com
 
-# Test DNS en forçant un serveur spécifique (ignore la config locale)
 dig @8.8.8.8 google.com
 ```
 
@@ -123,9 +116,7 @@ dig @8.8.8.8 google.com
 ## VLAN (optionnel)
 
 ```bash
-# Créer un VLAN
 sudo ip link add link eth0 name eth0.30 type vlan id 30
 
-# Attribuer une IP à un VLAN
 sudo ip addr add 192.168.10.1/24 dev eth0.10
 ```

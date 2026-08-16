@@ -47,7 +47,6 @@ Le firewall pfSense lui interdit d'accéder au LAN grâce à la règle de blocag
 ## Installation de Nginx
 
 ```bash
-# Sur web-dmz (10.10.30.10)
 sudo apt update && sudo apt install nginx -y
 sudo systemctl start nginx
 ```
@@ -105,17 +104,14 @@ server {
 > Tentative d'activation : le premier `ln -s` échoue (*"No such file or directory"*) — on corrige le chemin. Puis `nginx -t` échoue car le fichier sites-available/app n'avait pas été créé correctement au premier essai.
 
 ```bash
-# Lien symbolique pour activer le site
 sudo ln -s /etc/nginx/sites-available/app /etc/nginx/sites-enabled/
 
-# Validation de la syntaxe + rechargement
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
 ### Test depuis l'extérieur (attacker-kali)
 ```bash
 curl -I http://<firewall-WAN-IP>
-# Objectif réussi si "Server: nginx" apparaît dans la réponse HTTP
 ```
 
 ---

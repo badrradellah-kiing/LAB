@@ -47,16 +47,11 @@ Les namespaces c'est la base de Docker. Un conteneur c'est juste un processus Li
 ### Isolation PID
 
 ```bash
-# Sur l'hôte : 464 processus visibles
 ps aux | wc -l
-# → 464
 
-# On crée une bulle isolée
 sudo unshare --pid --fork --mount-proc /bin/bash
 
-# Dans la bulle : 2 processus seulement
 ps aux
-# → /bin/bash (PID 1) et ps aux
 ```
 
 ![Namespace PID Isolation](../screenshots/Module11-Linux-Internals/Screenshot%20from%202026-08-01%2000-29-30.png)
@@ -70,7 +65,6 @@ Après être sorti de la bulle, j'ai vérifié les contrôleurs cgroups disponib
 ```bash
 cat /proc/$$/cgroup
 cat /sys/fs/cgroup/cgroup.controllers
-# → cpuset cpu io memory hugetlb pids rdma misc
 ```
 
 ![Cgroups Controllers](../screenshots/Module11-Linux-Internals/Screenshot%20from%202026-08-01%2000-33-01.png)
@@ -99,18 +93,13 @@ Historiquement sous Linux, soit t'es root et tu peux tout faire, soit t'es user 
 ### Ce que j'ai fait
 
 ```bash
-# Copier netcat
 sudo cp /bin/nc /usr/bin/myserver
 
-# Tenter d'écouter sur le port 30 (< 1024) → Permission denied
 /usr/bin/myserver -l -p 30
 
-# Donner la capability spécifique
 sudo setcap 'cap_net_bind_service=+ep' /usr/bin/myserver
 
-# Vérifier
 getcap /usr/bin/myserver
-# → /usr/bin/myserver cap_net_bind_service=ep
 ```
 
 ![Capabilities setcap](../screenshots/Module11-Linux-Internals/Screenshot%20from%202026-08-03%2013-49-26.png)
@@ -124,7 +113,6 @@ En relançant `/usr/bin/myserver -l -p 30` sans sudo, ça passe. Le binaire a un
 ### AppArmor
 ```bash
 sudo aa-status
-# → 129 profils en mode "enforce"
 ```
 
 AppArmor c'est du MAC (Mandatory Access Control). Même si un processus tourne en root, AppArmor peut lui interdire de lire certains fichiers ou d'exécuter certains binaires. C'est la dernière ligne de défense.

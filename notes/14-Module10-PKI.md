@@ -74,7 +74,6 @@ cat web.crt intermediate.crt > web-fullchain.crt
 Pour vérifier que toute la chaîne est valide :
 ```bash
 openssl verify -CAfile root.crt -untrusted intermediate.crt web.crt
-# → web.crt: OK
 ```
 
 ---
@@ -101,13 +100,9 @@ Le `extendedKeyUsage=clientAuth` c'est ce qui distingue un cert client d'un cert
 ### Test avec curl
 
 ```bash
-# Sans certificat client → rejeté
 curl https://web.lab.local --cacert root.crt
-# → 400 No required SSL certificate was sent
 
-# Avec certificat client → ça passe
 curl https://web.lab.local --cacert root.crt --cert client.crt --key client.key
-# → 200 OK
 ```
 
 C'est exactement comme le badge d'accès dans un bâtiment : le gardien vérifie que tu as le bon badge (cert client) avant de te laisser entrer, en plus de s'identifier lui-même (cert serveur).

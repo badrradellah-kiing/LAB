@@ -4,6 +4,8 @@ Je note tout ici comme si je l'expliquais à quelqu'un qui débute, pour que ça
 
 Mon setup : une VM `k8s-node` (Ubuntu Server) en NAT, avec Docker installé. J'y accède en SSH depuis mon hôte via un port forwarding (2222 → 22), du coup le copier-coller marche.
 
+![Docker hello-world test](../screenshots/Module20-Docker/Screenshot%20from%202026-08-09%2002-17-47.png)
+
 ---
 
 ## Sommaire
@@ -63,13 +65,9 @@ Le point commun qui relie les deux : **root dans le conteneur = root sur l'hôte
 Le manuel insiste : on prouve, on ne suppose pas. Deux manips :
 
 ```bash
-# le conteneur se croit seul au monde (isolé)
 docker run --rm -it alpine sh -c 'ps aux; ip a; ls /'
-# -> il voit juste SES process, SON réseau, SES fichiers
 
-# la même chose, mais on lui retire le mensonge sur les process (LAB SEULEMENT)
 docker run --rm -it --pid=host alpine ps aux | head
-# -> il voit TOUS les process de l'hôte
 ```
 
 Le déclic : le conteneur n'a pas changé de nature. On lui a juste enlevé un mensonge (`--pid=host`). **L'isolation n'est pas une propriété du conteneur, c'est une CONFIGURATION.** Toute la sécurité conteneur tient dans cette phrase.
@@ -113,6 +111,8 @@ EXPOSE 8080
 ENTRYPOINT ["/api"]
 ```
 
+![Création du Dockerfile multi-stage](../screenshots/Module20-Docker/Screenshot%20from%202026-08-09%2013-43-00.png)
+
 **Le concept que j'ai capté : c'est une FILTRATION.** L'étage 1 fait tout le sale boulot (compiler, avec le compilateur, les sources, les outils). L'étage 2 ne récupère QUE le binaire (`COPY --from=build`) et jette tout le reste. Comme un filtre : je garde le produit fini, je jette l'atelier.
 
 Les 3 choix de sécurité :
@@ -126,17 +126,16 @@ En fait il y a DEUX filtrations qui se cumulent : le multi-stage filtre mon buil
 docker build -t mon-api:1.0 .
 ```
 
+![Build de l'image Docker](../screenshots/Module20-Docker/Screenshot%20from%202026-08-09%2013-50-58.png)
+
 ### Prouver que l'image est durcie (on suppose pas, on prouve)
 
 ```bash
-# 1) la taille : ma distroless fait quelques Mo vs ~80 Mo pour ubuntu
 docker images | grep -E 'mon-api|ubuntu'
 
-# 2) pas de shell : ÇA DOIT ÉCHOUER (c'est le but du distroless)
-docker run --rm -it mon-api:1.0 sh   # -> "sh: not found"
+docker run --rm -it mon-api:1.0 sh
 
-# 3) non-root :
-docker inspect <conteneur> --format '{{.Config.User}}'   # -> nonroot
+docker inspect <conteneur> --format '{{.Config.User}}'
 ```
 
 Un truc qui échoue (le shell), et c'est exactement ce qu'on veut. Contre-intuitif mais c'est LA preuve que l'image est minimale.
@@ -150,13 +149,13 @@ Durcir l'image c'est la moitié. L'autre moitié : durcir COMMENT on la lance. P
 La commande durcie :
 ```bash
 docker run -d --name X \
-  --read-only \                        # FS en lecture seule
-  --tmpfs /tmp:rw,noexec,nosuid \      # zone temporaire, rien d'exécutable
-  --cap-drop=ALL \                     # retire TOUTES les capabilities
-  --cap-add=NET_BIND_SERVICE \         # rajoute juste le strict nécessaire
-  --security-opt=no-new-privileges \   # pas d'élévation de privilège
-  --memory=256m --cpus=0.5 \           # limites cgroups
-  --user 65532:65532 \                 # UID non-root
+  --read-only \
+  --tmpfs /tmp:rw,noexec,nosuid \
+  --cap-drop=ALL \
+  --cap-add=NET_BIND_SERVICE \
+  --security-opt=no-new-privileges \
+  --memory=256m --cpus=0.5 \
+  --user 65532:65532 \
   mon-image
 ```
 
@@ -166,6 +165,8 @@ J'ai voulu durcir nginx avec `--cap-drop=ALL --read-only`. **Il a CRASHÉ** (Exi
 ```
 chown("/var/cache/nginx/client_temp") failed (Operation not permitted)
 ```
+
+![nginx-durci Exited (crash)](../screenshots/Module20-Docker/Screenshot%20from%202026-08-12%2001-09-00.png)
 nginx voulait faire un `chown`, qui a besoin de la capability `CAP_CHOWN`. Mais j'avais fait `cap-drop=ALL` → il ne l'avait plus → crash.
 
 **Double leçon :**
@@ -182,6 +183,8 @@ docker run -d --name nginx-durci --read-only \
 ```
 Cette fois : `Up` (il tourne) ET `docker exec ... touch /x` → `Read-only file system` (il est protégé). L'équilibre parfait : durci ET fonctionnel.
 
+![nginx-durci fonctionnel avec filesystem en lecture seule](../screenshots/Module20-Docker/Screenshot%20from%202026-08-12%2001-10-50.png)
+
 **Morale** : c'est plus facile de construire durci dès le départ (ma distroless n'avait AUCUN de ces problèmes) que de durcir après coup une image classique qui suppose avoir des privilèges. C'est pour ça qu'on construit durci d'abord.
 
 ---
@@ -191,11 +194,11 @@ Cette fois : `Up` (il tourne) ET `docker exec ... touch /x` → `Read-only file 
 Même une image bien construite peut cacher des bibliothèques avec des failles connues (CVE), invisibles à l'œil nu. On scanne AVANT de déployer (shift left), pas après l'incident.
 
 ```bash
-# installer trivy (dépôt officiel Aqua)
-# puis :
-trivy image mon-api:1.0                              # mon image -> propre
-trivy image --severity HIGH,CRITICAL node:18         # -> BEAUCOUP de CVE
+trivy image mon-api:1.0
+trivy image --severity HIGH,CRITICAL node:18
 ```
+
+![Trivy scan ubuntu sans vulnérabilités](../screenshots/Module20-Docker/Screenshot%20from%202026-08-12%2001-12-27.png)
 
 ### Ce que j'ai observé (le contraste)
 - `mon-api` (distroless + binaire Go) → **0 CVE**
