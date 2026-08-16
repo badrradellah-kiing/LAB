@@ -1,7 +1,7 @@
-last_processed=Screenshot from 2026-08-14 23-59-59.png
-last_module=Module20-Docker
-last_date=2026-08-14
-screenshot_count_module20=7
+last_processed=Screenshot from 2026-08-16 16-11-23.png
+last_module=Part4-Kubernetes
+last_date=2026-08-16
+screenshot_count_module_kubernetes=2
 notes_written=true
-sections_covered=Container_isolation,Image_hardening,Runtime_security,Trivy_scanning
-next_module=Kubernetes
+sections_covered=Install,Cluster,Deployment,Service,Declarative,Diagnostic
+next_module=Part5-Unknown

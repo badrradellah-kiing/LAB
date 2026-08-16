@@ -133,8 +133,6 @@ kubectl get pod
 
 Changer une **quantité** ne touche PAS aux pods existants : K8s a juste **ajouté** 2 pods.
 
-![Visualisation des Pods en cours d'exécution](../screenshots/Part4-Kubernetes/pods-running.png)
-
 > ⚠️ **Mes typos à surveiller** (j'ai fait les 3 !) :
 > - `kubectl scal ...` → "unknown command scal" (c'est `scale`)
 > - `kubectl scale deplyment ...` → "no resource type deplyment" (c'est `deployment`)
@@ -178,6 +176,8 @@ changent, le nom `web` reste stable. **C'est TOUT l'intérêt du Service.**
 ```bash
 kubectl get all
 ```
+
+![kubectl get all — vue complète du cluster](../screenshots/Part4-Kubernetes/kubectl-get-all.png)
 
 ---
 
@@ -298,6 +298,8 @@ rien ne casse tant que l'état voulu = l'état réel. C'est ce qui rend le décl
    90 % des réponses sont là.
 3. **`kubectl logs <nom>`** = ce que l'appli elle-même a dit (seulement si le conteneur a
    réussi à démarrer puis a parlé).
+
+![kubectl describe pod — section Events et diagnostic](../screenshots/Part4-Kubernetes/describe-events-diagnostic.png)
 
 **Quand chaque outil sert (la vraie leçon) :**
 - `describe` = problèmes **AUTOUR** du conteneur (image introuvable, montage, ressources,
