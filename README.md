@@ -74,6 +74,17 @@ Chaque module a ses notes complètes (commandes, screenshots, galères) dans [`n
 | 19 | [Incident Response](./notes/18-Module19-IR-Forensics.md) | IR drill complet (PICERL), forensics, timeline |
 | 20 | [Capstone Purple Team](./notes/19-Module20-Capstone-Purple-Team.md) | Kill chain complète, rouge vs bleu, score de couverture |
 
+### DevSecOps & Cloud-Native
+| # | Module | Ce que j'ai fait |
+|---|--------|-----------------|
+| P3 | [Docker & Conteneurs](./notes/20-DevSecOps-Part3-Docker.md) | Images, Dockerfile, multi-stage, scan Trivy, docker-compose |
+| P4 | [Kubernetes Fondamentaux](./notes/21-Kubernetes-Fondamentaux.md) | Pods, Deployments, Services, ConfigMaps, cluster kind |
+| P5 | [Kubernetes Production](./notes/22-Kubernetes-Production.md) | StatefulSets, PV/PVC, Probes, HPA, Ingress, Helm |
+| P6 | [Kubernetes Lifecycle](./notes/23-Kubernetes-Lifecycle.md) | Upgrade 1.34→1.36, drain/cordon, etcd backup, zero-downtime |
+| P7 | [Kubernetes Security](./notes/24-Kubernetes-Security.md) | RBAC escalade, PSA, NetworkPolicies, etcd encryption, Falco |
+| P8 | [Cilium, Hubble, Tetragon](./notes/25-Cilium-Hubble-Tetragon.md) | CNI eBPF, policies L7, egress FQDN, WireGuard, Tetragon SIGKILL |
+| P10 | [Terraform & IaC](./notes/26-Terraform-IaC.md) | AWS S3, Trivy IaC scan (8→2 failles), variables, state distant S3 |
+
 ---
 
 ## Le résultat du purple-team (Module 20)
@@ -97,10 +108,17 @@ Le dernier module c'est l'examen final : j'attaque mon lab de bout en bout et je
 
 ## Ce qui me reste à faire
 
+### Purple-team (backlog)
 - [ ] Détection auto sur process depuis `/tmp` + nouveau cron + port non standard
 - [ ] Combler Pass-the-Hash (4624 type 3 + NTLM anormal)
 - [ ] Exporter ma couverture en JSON ATT&CK Navigator
-- [ ] Commencer le lab DevSecOps & Cloud Security (Docker, K8s, cloud-native)
+
+### Cloud-native (backlog)
+- [ ] OIDC : FreeIPA + Keycloak + kubelogin (identité humaine K8s)
+- [ ] Falco → Wazuh via falcosidekick (SIEM + runtime detection)
+- [ ] Hubble UI (carte visuelle du trafic)
+- [ ] Cilium : traduire toutes les NetworkPolicies en CiliumNetworkPolicy + L7
+- [ ] Terraform : modules réutilisables, KMS CMK, CI/CD pipeline
 
 ---
 
