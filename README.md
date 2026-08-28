@@ -84,6 +84,7 @@ Chaque module a ses notes complètes (commandes, screenshots, galères) dans [`n
 | P7 | [Kubernetes Security](./notes/24-Kubernetes-Security.md) | RBAC escalade, PSA, NetworkPolicies, etcd encryption, Falco |
 | P8 | [Cilium, Hubble, Tetragon](./notes/25-Cilium-Hubble-Tetragon.md) | CNI eBPF, policies L7, egress FQDN, WireGuard, Tetragon SIGKILL |
 | P10 | [Terraform & IaC](./notes/26-Terraform-IaC.md) | AWS S3, Trivy IaC scan (8→2 failles), variables, state distant S3 |
+| P12 | [CI/CD & GitOps](./notes/27-CICD-GitOps.md) | Pipeline GitHub Actions (5 portes), Cosign keyless, ArgoCD réconciliation |
 
 ---
 
